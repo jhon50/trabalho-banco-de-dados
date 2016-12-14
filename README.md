@@ -246,20 +246,12 @@ HAVING COUNT(DISTINCT m.turma_id) >= 3
 
 - 5) Listar por disciplina o número de professores que podem ministrá-la e quantos efetivamente ministram a mesma para uma turma.
 ```sql
-SELECT d.nome nome_disciplina, COUNT(DISTINCT p.professor_id) podem_ministrar, temp.ministrando
-FROM professor p
-  JOIN professor_disciplina pd
-    ON p.professor_id = pd.professor_id
-  JOIN disciplina d
-    ON pd.disciplina_id = d.disciplina_id
-  JOIN (
-    SELECT mt.disciplina_id, COUNT(DISTINCT p.professor_id) ministrando
-    FROM professor p
-      LEFT JOIN ministra_turma mt
-        ON p.professor_id = mt.professor_id
-    GROUP BY mt.disciplina_id) temp
-   ON temp.disciplina_id = d.disciplina_id
-   GROUP BY nome_disciplina
+select d.nome, count(distinct p.professor_id), count(distinct mt.professor_id)
+from disciplina d
+left join professor_disciplina pd on d.disciplina_id = pd.disciplina_id
+left join professor p on pd.professor_id = p.professor_id
+left join ministra_turma mt on d.disciplina_id = mt.disciplina_id
+group by d.nome
 ```
 
 ![questao1](img/05.png)
